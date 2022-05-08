@@ -14,9 +14,6 @@ async function main() {
 
     const stocks = [GME, MSFT, DIS, BNTX];
 
-    //console.log(result);
-    //console.log(stocks);
-
     stocks.forEach(stock => stock.values.reverse());
 
     // Time Chart
@@ -64,6 +61,28 @@ async function main() {
     });
 
 
+    // Average Chart
+    new Chart(averagePriceChartCanvas.getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: stocks.map(stock => stock.meta.symbol),
+            datasets: [{
+                data: stocks.map(stock => getAverage(stock.values)),
+                backgroundColor: stocks.map(stock => getColor(stock.meta.symbol)),
+                borderColor: stocks.map(stock => getColor(stock.meta.symbol)),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+
     function getColor(stock){
         if(stock === "GME"){
             return 'rgba(61, 161, 61, 0.7)'
@@ -88,9 +107,15 @@ async function main() {
         })
         return highest
     }
-    
 
-//console.log(stocks[0].values);
+    function getAverage(values){
+        let total = 0;
+        values.forEach(value => {
+            total = parseFloat(value.high) + total;
+        })
+        return total/values.length;
+
+    }
 }
 
 main()
